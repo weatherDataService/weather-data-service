@@ -1,6 +1,6 @@
 # WEATHER DATA SERVICE
 
-Weather Data Service is a RESTful web service providing five REST APIs that can receive different weather metrics data such as temperature, humidity, wind speed, etc. from various sensors, store them in the database, and allow clients querying weather metrics data from one, more or all sensors. All unit test cases have been created for all methods in all APIs, data access objects (DAO) and service classes. All the unit test cases have been run successfully. Since I don’t have the time to install Oracle database in my MacBook, I cannot create an Oracle database and required tables to do APIs running test using Google Postman. 
+Weather Data Service is a RESTful web service providing five REST APIs that can receive different weather metrics data such as temperature, humidity, wind speed, etc. from various sensors, store them in the database, and allow clients querying weather metrics data from one, more or all sensors. All unit test cases have been created for all methods in all APIs, data access objects (DAO) and service classes. All the unit test cases have been run successfully. Since I don’t have the time to install Oracle database in my MacBook, I will not create an Oracle database and required tables to do APIs running test using Google Postman at this time. 
 
 # Technologies used to develop, build and run the Weather Data Service:
 
@@ -33,7 +33,7 @@ A client can call this API endpoint to get the statistic values (min, max, sum a
 
 Step#1: Install Oracle Database and create sequence SEQ_WEATHER_DATA_ID and two database tables: WEATHER_METRICS and WEATHER_DATA. Create public synonym, etc.
 
-Step#2: Install WildFly or other application server and add Oracle JDBC driver to the application server. Create a data source “jdbc/weather” from the application server’s admin console.
+Step#2: Install WildFly or other application servers and add Oracle JDBC driver to the application server. Create a data source “jdbc/weather” from the application server’s admin console.
 
 Step#3: Check out the source codes of RESTful web service “weather-data-service” from https://github.com/weatherDataService/weather-data-service
 
@@ -43,13 +43,13 @@ Step#5: Deploy weather-data-service-1.0-SNAPSHOT.war to WildFly or other applica
 
 Step#6: Create request payloads in JSON format for different APIs. Copy/paste each payload message to Postman’s Body area against corresponding API endpoint link and click the “Send” button to run the APIs.
 
-Step#7: Check the response in JSON format. 
+Step#7: Check the response in JSON format from Postman. 
 
 # Database Design:
 
 Create the following entities in Oracle database:
 
-1. Create a new sequence SEQ_WEATHER_DATA_ID using the following DDL. This sequence helps to create “DATA_ID” column value in WEATHER_DATA table (Primary key). 
+1. Create a new sequence SEQ_WEATHER_DATA_ID using the following DDL. This sequence helps to generate “DATA_ID” column value in WEATHER_DATA table (Primary key). 
 
 CREATE SEQUENCE WEATHER_DOMAIN.SEQ_WEATHER_DATA_ID
 START WITH     1000
