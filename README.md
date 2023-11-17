@@ -1,6 +1,6 @@
 # WEATHER DATA SERVICE
 
-Weather Data Service is a RESTful web service providing five REST APIs that can receive different weather metrics data such as temperature, humidity, wind speed, etc. from various sensors, store them in the database, and allow clients querying weather metrics data from one, more or all sensors. All unit test cases have been created for all methods in all APIs, data access objects (DAO) and service classes. All the unit test cases have been run successfully. Since I don’t have the time to install Oracle database in my MacBook, I will not create an Oracle database and required tables to do APIs running test using Google Postman at this time. 
+Weather Data Service is a RESTful web service providing five REST APIs that can receive different weather metrics data such as temperature, humidity, wind speed, etc. from various sensors, store them in the database, and allow clients querying weather metrics data from one, more or all sensors. All unit test cases have been created for all methods in all APIs, data access objects (DAO) and service classes. All the unit test cases have been run successfully. Since I don’t have enough time to install Oracle database in my MacBook, I will not create an Oracle database & required tables and deployed my service's build to an application server to do real APIs running test using Google Postman at this time. 
 
 # Technologies used to develop, build and run the Weather Data Service:
 
