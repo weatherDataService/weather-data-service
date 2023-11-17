@@ -51,33 +51,33 @@ Create the following entities in Oracle database:
 
 1. Create a new sequence SEQ_WEATHER_DATA_ID using the following DDL. This sequence helps to generate “DATA_ID” column value in WEATHER_DATA table (Primary key). 
 
-CREATE SEQUENCE WEATHER_DOMAIN.SEQ_WEATHER_DATA_ID
-START WITH     1000
-INCREMENT BY   1
-NOCACHE
-NOCYCLE;
+> CREATE SEQUENCE WEATHER_DOMAIN.SEQ_WEATHER_DATA_ID
+> START WITH     1000
+> INCREMENT BY   1
+> NOCACHE
+> NOCYCLE;
 
 2. Create a new table WEATHER_METRICS using the following DDL. This table defines weather metrics names such as temperature, humidity, wind speed, etc.
 
-CREATE TABLE WEATHER_DOMAIN.WEATHER_METRICS (	
-      METRIC_NAME VARCHAR2(20) NOT NULL, 
-      DESCRIPTION VARCHAR2(100) NULL,
-      CREATED_DATE DATE NULL,
-      CONSTRAINT WEATHER_METRICS_PK PRIMARY KEY (METRICS_NAME)
-)
+> CREATE TABLE WEATHER_DOMAIN.WEATHER_METRICS (	
+>       METRIC_NAME VARCHAR2(20) NOT NULL, 
+>       DESCRIPTION VARCHAR2(100) NULL,
+>       CREATED_DATE DATE NULL,
+>       CONSTRAINT WEATHER_METRICS_PK PRIMARY KEY (METRICS_NAME)
+> )
 
 3. Create a new table WEATHER_DATA using the following DDL. This table contains all whether metrics values such as temperature, humidity, wind speed, etc. collected from all sensors at different times.
 
-CREATE TABLE PAYWALL_TEST.WEATHER_DATA (   
-     DATA_ID NUMBER NOT NULL,
-     SENSOR_ID VARCHAR2(20) NOT NULL,
-     METRIC_NAME VARCHAR2(20) NOT NULL, 
-     METRIC_VALUE NUMBER NOT NULL,
-     CREATED_DATE DATE, 
-     CONSTRAINT WEATHER_DATA_PK PRIMARY KEY (DATA_ID), 
-     CONSTRAINT WEATHER_DATA_FK FOREIGN KEY (METRIC_NAME)
-     REFERENCES WEATHER_METRICS(METRIC_NAME)
-)
+> CREATE TABLE PAYWALL_TEST.WEATHER_DATA (   
+>      DATA_ID NUMBER NOT NULL,
+>      SENSOR_ID VARCHAR2(20) NOT NULL,
+>      METRIC_NAME VARCHAR2(20) NOT NULL, 
+>      METRIC_VALUE NUMBER NOT NULL,
+>      CREATED_DATE DATE, 
+>      CONSTRAINT WEATHER_DATA_PK PRIMARY KEY (DATA_ID), 
+>      CONSTRAINT WEATHER_DATA_FK FOREIGN KEY (METRIC_NAME)
+>      REFERENCES WEATHER_METRICS(METRIC_NAME)
+> )
 
 4. We may need to create a SENSORS table defining all sensors. Due to the time limit, I will not create this table at this time.
 
