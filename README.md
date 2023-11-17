@@ -4,13 +4,13 @@ Weather Data Service is a RESTful web service providing five REST APIs that can 
 
 # Technologies used to develop, build and run the Weather Data Service:
 
-Programming Language: Java
-Framework used to develop RESTful web service: JBoss/Red Hat RESTEasy
-Database: Oracle database
-Persistence Framework: EclipseLink JPA
-JSON data-binding technology: FasterXML/Jackson-databind
-Testing Framework: JUnit/Mockito
-Application server: JBoss/Red Hat WildFly
+- Programming Language: Java
+- Framework used to develop RESTful web service: JBoss/Red Hat RESTEasy
+- Database: Oracle database
+- Persistence Framework: EclipseLink JPA
+- JSON data-binding technology: FasterXML/Jackson-databind
+- Testing Framework: JUnit/Mockito
+- Application server: JBoss/Red Hat WildFly
 
 # Description of Five REST APIs:
 
