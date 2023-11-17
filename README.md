@@ -1,8 +1,8 @@
-#WEATHER DATA SERVICE
+# WEATHER DATA SERVICE
 
 Weather Data Service is a RESTful web service providing five REST APIs that can receive different weather metrics data such as temperature, humidity, wind speed, etc. from various sensors, store them in the database, and allow clients querying weather metrics data from one, more or all sensors. All unit test cases have been created for all methods in all APIs, data access objects (DAO) and service classes. All the unit test cases have been run successfully. Since I don’t have the time to install Oracle database in my MacBook, I cannot create an Oracle database and required tables to do APIs running test using Google Postman. 
 
-Technologies used to develop, build and run the Weather Data Service:
+# Technologies used to develop, build and run the Weather Data Service:
 
 Programming Language: Java
 Framework used to develop RESTful web service: JBoss/Red Hat RESTEasy
@@ -12,7 +12,7 @@ JSON data-binding technology: FasterXML/Jackson-databind
 Testing Framework: JUnit/Mockito
 Application server: JBoss/Red Hat WildFly
 
-Description of Five REST APIs:
+# Description of Five REST APIs:
 
 API#1: http://127.0.0.1/weather/weatherdata/add (POST)
 A sensor can call this API endpoint with a request payload containing all weather metrics values measured by this sensor at a specific time, and the API will store these data in the WEATHER_DATA database table for this sensor. The sensor’s request payload includes sensor ID, a collection of metricsName-metricsValue pairs and the time of measurement. All three attributes in the payload are required.
@@ -28,7 +28,8 @@ A client can call this API endpoint to get the statistic values (min, max, sum a
 
 API#5. http://127.0.0.1/weather/metricsstatistic/findall  (POST)
 A client can call this API endpoint to get the statistic values (min, max, sum and average) of all weather metrics for all sensors grouped by sensor ID and metrics name in a specific period of time. The client’s request payload may include start date and end date. Both attributes in the payload are optional. If the start date and end date are not provided in the payload, the statistic values (min, max, sum and average) of all the weather metrics for all sensors in the last one day will be provided in the response.
-Steps to run APIs:
+
+# Steps to run APIs:
 
 Step#1: Install Oracle Database and create sequence SEQ_WEATHER_DATA_ID and two database tables: WEATHER_METRICS and WEATHER_DATA. Create public synonym, etc.
 
@@ -44,7 +45,7 @@ Step#6: Create request payloads in JSON format for different APIs. Copy/paste ea
 
 Step#7: Check the response in JSON format. 
 
-Database Design:
+# Database Design:
 
 Create the following entities in Oracle database:
 
