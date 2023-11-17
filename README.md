@@ -79,7 +79,6 @@ CREATE TABLE PAYWALL_TEST.WEATHER_DATA (
 )
 
 4. We may need to create a SENSORS table defining all sensors. Due to the time limit, I will not create this table at this time.
-![image](https://github.com/weatherDataService/weather-data-service/assets/6490420/e1ded511-5ca8-4527-acdf-d3957db4bbac)
 
 
 
