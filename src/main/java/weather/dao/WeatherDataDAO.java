@@ -19,7 +19,7 @@ import weather.model.MetricsStatistic;
 @Transactional(Transactional.TxType.NOT_SUPPORTED)
 public class WeatherDataDAO {
 
-    //These data will come from database table "SENSOR".
+    //These data will come from database table "WEATHER_SENSOR".
     private static final List<String> SENSOR_IDS = List.of("sensorNo1", "sensorNo2", "sensorNo3", "sensorNo4", "sensorNo5");
     //These data will come from database table "WEATHER_METRICS".
     private static final List<String> METRICS_NAMES = List.of("temperature", "humidity", "windspeed");

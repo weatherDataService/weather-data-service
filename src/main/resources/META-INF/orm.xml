@@ -16,7 +16,7 @@
     
     <named-query name="WeatherData.findWeatherDataBySensorIDMetricsName">
         <query><![CDATA[SELECT s FROM WeatherData s WHERE s.sensorID = :sensorID and s.metricsName = :metricsName 
-                        ORDER BY s.createdDate ]]></query>
+                        ORDER BY s.createdDate DESC ]]></query>
     </named-query>
     
     <named-query name="WeatherData.findMetricsAverageBySensorIDMetricsName">
