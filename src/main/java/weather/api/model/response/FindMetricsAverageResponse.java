@@ -1,19 +1,20 @@
 package weather.api.model.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import java.math.BigDecimal;
+import java.util.List;
+import weather.model.MetricsAverage;
 
 @JsonInclude(value = JsonInclude.Include.NON_EMPTY)
 public class FindMetricsAverageResponse extends RestResponseBase {
 
-    private BigDecimal metricsAverage;
+    private List<MetricsAverage> metricsAverages;
 
-    public BigDecimal getMetricsAverage() {
-        return metricsAverage;
+    public List<MetricsAverage> getMetricsAverages() {
+        return metricsAverages;
     }
 
-    public void setMetricsAverage(BigDecimal metricsAverage) {
-        this.metricsAverage = metricsAverage;
+    public void setMetricsAverages(List<MetricsAverage> metricsAverages) {
+        this.metricsAverages = metricsAverages;
     }
-
+    
 }

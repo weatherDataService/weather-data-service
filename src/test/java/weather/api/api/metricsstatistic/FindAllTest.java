@@ -67,13 +67,9 @@ public class FindAllTest {
         FindAllMetricsStatisticResponse response = new FindAllMetricsStatisticResponse();
         response.setStatus(Status.SUCCESS);
         response.setMessage("Metric statistics are successfully gotten!");
-        response.setMetricsStatisticList(createSampleMetricStatisticList());
-        return response;
-    }
-
-    private List<MetricsStatistic> createSampleMetricStatisticList() {
         List<MetricsStatistic> metricStatisticList = new ArrayList<>();
-        return metricStatisticList;
+        response.setMetricsStatisticList(metricStatisticList);
+        return response;
     }
 
     private FindAllMetricsStatisticResponse createSampleFailureResponse() {

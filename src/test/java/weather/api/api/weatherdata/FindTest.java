@@ -31,7 +31,7 @@ public class FindTest {
 
     @Test
     public void testFindWeatherDataSuccess() {
-        FindWeatherDataRequest request = createSampleRequest();
+        FindWeatherDataRequest request = new FindWeatherDataRequest();
         FindWeatherDataResponse response = createSampleSuccessResponse();
 
         when(weatherDataService.findWeatherData(request)).thenReturn(response);
@@ -44,7 +44,7 @@ public class FindTest {
 
     @Test
     public void testFindWeatherDataFailure() {
-        FindWeatherDataRequest request = createSampleRequest();
+        FindWeatherDataRequest request = new FindWeatherDataRequest();
         FindWeatherDataResponse response = createSampleFailureResponse();
 
         when(weatherDataService.findWeatherData(request)).thenReturn(response);
@@ -55,15 +55,10 @@ public class FindTest {
         assertEquals(response, result.getEntity());
     }
 
-    private FindWeatherDataRequest createSampleRequest() {
-        FindWeatherDataRequest request = new FindWeatherDataRequest();
-        return request;
-    }
-
     private FindWeatherDataResponse createSampleSuccessResponse() {
         FindWeatherDataResponse response = new FindWeatherDataResponse();
         response.setStatus(Status.SUCCESS);
-        response.setMessage("Weather data are successfully gotten!");
+        response.setMessage("Success getting weather data");
         return response;
     }
 

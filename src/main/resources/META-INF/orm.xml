@@ -14,17 +14,27 @@
                         ORDER BY s.sensorID, s.metricsName, s.createdDate ]]></query>
     </named-query>
     
-    <named-query name="WeatherData.findMetricsAverageBySensorID">
-        <query><![CDATA[SELECT AVG(s.metricsValue) FROM WeatherData s WHERE s.sensorID IN :sensorIDs 
-                        AND s.metricsName = :metricsName AND s.createdDate >= :startDate AND s.createdDate <= :endDate ]]></query>
+    <named-query name="WeatherData.findWeatherDataBySensorIDMetricsName">
+        <query><![CDATA[SELECT s FROM WeatherData s WHERE s.sensorID = :sensorID and s.metricsName = :metricsName 
+                        ORDER BY s.createdDate ]]></query>
+    </named-query>
+    
+    <named-query name="WeatherData.findMetricsAverageBySensorIDMetricsName">
+        <query><![CDATA[SELECT s.sensorID, s.metricsName, AVG(s.metricsValue) FROM WeatherData s WHERE s.sensorID IN :sensorIDs 
+                        AND s.metricsName IN :metricsNames AND s.createdDate >= :startDate AND s.createdDate <= :endDate 
+                        GROUP BY s.sensorID, s.metricsName]]></query>
+    </named-query>
+    
+    <named-query name="WeatherData.findMetricsAverageByMetricsName">
+        <query><![CDATA[SELECT s.sensorID, s.metricsName, AVG(s.metricsValue) FROM WeatherData s WHERE s.metricsName IN :metricsNames 
+                        AND s.createdDate >= :startDate AND s.createdDate <= :endDate GROUP BY s.sensorID, s.metricsName]]></query>
     </named-query>
     
     <named-query name="WeatherData.findOverallMetricsAverage">
-        <query><![CDATA[SELECT AVG(s.metricsValue) FROM WeatherData s WHERE s.metricsName = :metricsName 
-                        AND s.createdDate >= :startDate AND s.createdDate <= :endDate ]]></query>
+        <query><![CDATA[SELECT s.sensorID, s.metricsName, AVG(s.metricsValue) FROM WeatherData s WHERE 
+                        s.createdDate >= :startDate AND s.createdDate <= :endDate GROUP BY s.sensorID, s.metricsName]]></query>
     </named-query>
 
-    
     <named-query name="WeatherData.findMetricsStatisticBySensorIDMetricsName">
         <query><![CDATA[SELECT s.sensorID, s.metricsName, MIN(s.metricsValue), MAX(s.metricsValue), SUM(s.metricsValue), AVG(s.metricsValue) FROM WeatherData s WHERE s.sensorID IN :sensorIDs 
                         AND s.metricsName = :metricsName AND s.createdDate >= :startDate AND s.createdDate <= :endDate GROUP BY s.sensorID, s.metricsName]]></query>

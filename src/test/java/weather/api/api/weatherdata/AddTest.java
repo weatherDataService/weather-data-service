@@ -69,7 +69,7 @@ public class AddTest {
     private AddWeatherDataResponse createSampleSuccessResponse() {
         AddWeatherDataResponse response = new AddWeatherDataResponse();
         response.setStatus(Status.SUCCESS);
-        response.setMessage("Weather data are successfully added!");
+        response.setMessage("Success adding weather data");
         return response;
     }
 

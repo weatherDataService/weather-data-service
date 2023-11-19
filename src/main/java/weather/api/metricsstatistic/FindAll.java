@@ -15,13 +15,9 @@ import weather.api.model.response.FindAllMetricsStatisticResponse;
 import weather.service.WeatherDataService;
 
 /** Description of the API:
-A client can call this API endpoint to get the statistic values (min, max, 
-sum and average) of all weather metrics for all sensors grouped by sensor ID 
-and metrics name in a specific period of time. The client’s request payload 
-may include start date and end date. Both attributes in the payload are optional. 
-If the start date and end date are not provided in the payload, the statistic 
-values (min, max, sum and average) of all the weather metrics for all sensors 
-in the last one day will be provided in the response.
+A client can call this API endpoint to get all the statistic values (min, max, sum and average) of all weather metrics 
+for all sensors grouped by sensor ID and metrics name in a specific period of time. The client’s request payload may 
+include start date and end date. Both attributes in the payload are required and the start date must be before the end date.
 */ 
 
 @Path("/metricsstatistic/findall")

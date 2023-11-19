@@ -34,7 +34,7 @@ public class FindTest {
 
     @Test
     public void testFindMetricStatisticSuccess() {
-        FindMetricsStatisticRequest request = createSampleRequest();
+        FindMetricsStatisticRequest request = new FindMetricsStatisticRequest();
         FindMetricsStatisticResponse response = createSampleSuccessResponse();
 
         when(weatherDataService.findMetricsStatistic(request)).thenReturn(response);
@@ -47,7 +47,7 @@ public class FindTest {
 
     @Test
     public void testFindMetricStatisticFailure() {
-        FindMetricsStatisticRequest request = createSampleRequest();
+        FindMetricsStatisticRequest request = new FindMetricsStatisticRequest();
         FindMetricsStatisticResponse response = createSampleFailureResponse();
 
         when(weatherDataService.findMetricsStatistic(request)).thenReturn(response);
@@ -58,22 +58,13 @@ public class FindTest {
         assertEquals(response, result.getEntity());
     }
 
-    private FindMetricsStatisticRequest createSampleRequest() {
-        FindMetricsStatisticRequest request = new FindMetricsStatisticRequest();
-        return request;
-    }
-
     private FindMetricsStatisticResponse createSampleSuccessResponse() {
         FindMetricsStatisticResponse response = new FindMetricsStatisticResponse();
         response.setStatus(Status.SUCCESS);
         response.setMessage("Metric statistics are successfully gotten!");
-        response.setMetricsStatisticList(createSampleMetricStatisticList());
-        return response;
-    }
-
-    private List<MetricsStatistic> createSampleMetricStatisticList() {
         List<MetricsStatistic> metricStatisticList = new ArrayList<>();
-        return metricStatisticList;
+        response.setMetricsStatisticList(metricStatisticList);
+        return response;
     }
 
     private FindMetricsStatisticResponse createSampleFailureResponse() {

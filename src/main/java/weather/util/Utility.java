@@ -7,10 +7,14 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import org.apache.commons.lang3.StringUtils;
+import weather.api.model.request.FindWeatherDataRequestBase;
 
 public class Utility {
 
     private static final DateTimeFormatter DATE_FORMATTER_YYYYMMDD = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+    private Utility() {
+    }
 
     public static Date getDateFromString(String dateString) {
         if (dateString == null) {
@@ -27,7 +31,7 @@ public class Utility {
 
     public static Date getStartDate(String startDateString) {
         if (StringUtils.isBlank(startDateString)) {
-            return Timestamp.valueOf(LocalDateTime.now().minusDays(1));
+            return Timestamp.valueOf(LocalDateTime.now().minusHours(1));
         } else {
             return getDateFromString(startDateString);
         }
@@ -38,6 +42,24 @@ public class Utility {
             return Timestamp.valueOf(LocalDateTime.now());
         } else {
             return getDateFromString(endDateString);
+        }
+    }
+
+    public static void validateStartEndDates(FindWeatherDataRequestBase request) throws WeatherDataServiceException {
+        if (StringUtils.isBlank(request.getStartDate()) && StringUtils.isBlank(request.getEndDate())) {
+            if (getDateFromString(request.getStartDate()).after(getDateFromString(request.getEndDate()))) {
+                throw new WeatherDataServiceException("Start date is after end date");
+            }
+        }
+    }
+
+    public static void validateStartEndDatesForFindStatistic(FindWeatherDataRequestBase request) throws WeatherDataServiceException {
+        if (StringUtils.isBlank(request.getStartDate())) {
+            throw new WeatherDataServiceException("Start date missing");
+        } else if (StringUtils.isBlank(request.getEndDate())) {
+            throw new WeatherDataServiceException("End date missing");
+        } else if (getDateFromString(request.getStartDate()).after(getDateFromString(request.getEndDate()))) {
+            throw new WeatherDataServiceException("Start date is after end date");
         }
     }
 

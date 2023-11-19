@@ -15,11 +15,10 @@ import weather.api.model.response.AddWeatherDataResponse;
 import weather.service.WeatherDataService;
 
 /** Description of the API:
-A sensor can call this API endpoint with a request payload containing all weather 
-metrics values measured by this sensor at a specific time, and this API will store 
-these data in the WEATHER_DATA database table for this sensor. The sensor’s request 
-payload includes sensor ID, a collection of metricsName-metricsValue pairs and the 
-time of measurement. All three attributes in the payload are required.
+A sensor can call this API endpoint with a request payload containing all kinds of weather metrics values 
+measured by this sensor at a specific time, and the API will store these data in the WEATHER_DATA database 
+table for this sensor. The sensor’s request payload includes sensor ID, a collection of metricsName-metricsValue 
+pairs and the time of measurement. All three attributes in the payload are required.
 */
 
 @Path("/weatherdata/add")

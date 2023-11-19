@@ -1,20 +1,19 @@
 package weather.api.model.request;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import org.hibernate.validator.constraints.NotEmpty;
+import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class FindMetricsAverageRequest extends FindWeatherDataRequestBase {
+    
+    private List<String> metricsNames;
 
-    @NotEmpty(message = "Missing metrics name")
-    private String metricsName;
-
-    public String getMetricsName() {
-        return metricsName;
+    public List<String> getMetricsNames() {
+        return metricsNames;
     }
 
-    public void setMetricsName(String metricsName) {
-        this.metricsName = metricsName;
+    public void setMetricsNames(List<String> metricsNames) {
+        this.metricsNames = metricsNames;
     }
-
+    
 }

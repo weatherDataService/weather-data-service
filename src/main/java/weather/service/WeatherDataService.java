@@ -10,6 +10,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import weather.api.model.enums.Status;
 import weather.api.model.request.AddWeatherDataRequest;
 import weather.api.model.request.FindAllMetricsStatisticRequest;
@@ -23,6 +24,7 @@ import weather.api.model.response.FindMetricsStatisticResponse;
 import weather.api.model.response.FindWeatherDataResponse;
 import weather.dao.WeatherDataDAO;
 import weather.entity.WeatherData;
+import weather.model.MetricsAverage;
 import weather.model.MetricsStatistic;
 import weather.util.Utility;
 import weather.util.WeatherDataServiceException;
@@ -53,7 +55,7 @@ public class WeatherDataService {
             }
 
             response.setStatus(Status.SUCCESS);
-            response.setMessage("Weather data are successfully added!");
+            response.setMessage("Success adding weather data");
 
         } catch (WeatherDataServiceException ex) {
             LOGGER.log(Level.WARNING, ex.getMessage());
@@ -75,19 +77,27 @@ public class WeatherDataService {
 
         try {
             List<String> sensorIDs = request.getSensorIDs();
-            if (CollectionUtils.isEmpty(sensorIDs)) {
+            if (StringUtils.isBlank(request.getStartDate()) || StringUtils.isBlank(request.getEndDate())) {
+                weatherDataList = weatherDataDao.findLatestWeatherData(request.getSensorIDs());
+            } else if (CollectionUtils.isEmpty(sensorIDs)) {
+                Utility.validateStartEndDates(request);
                 weatherDataList = weatherDataDao.findAllWeatherData(Utility.getStartDate(request.getStartDate()),
                         Utility.getEndDate(request.getEndDate()));
             } else {
+                Utility.validateStartEndDates(request);
                 weatherDataList = weatherDataDao.findWeatherDataBySensorID(sensorIDs,
                         Utility.getStartDate(request.getStartDate()),
                         Utility.getEndDate(request.getEndDate()));
             }
 
             response.setStatus(Status.SUCCESS);
-            response.setMessage("Weather data are successfully gotten!");
+            response.setMessage("Success getting weather data");
             response.setWeatherDataList(weatherDataList);
 
+        } catch (WeatherDataServiceException ex) {
+            LOGGER.log(Level.WARNING, ex.getMessage());
+            response.setStatus(Status.FAILURE);
+            response.setMessage(ex.getMessage());
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, ex.getMessage());
             response.setStatus(Status.ERROR);
@@ -99,22 +109,33 @@ public class WeatherDataService {
 
     public FindMetricsAverageResponse findMetricsAverage(FindMetricsAverageRequest request) {
         FindMetricsAverageResponse response = new FindMetricsAverageResponse();
-        BigDecimal metricsAverage;
+        List<MetricsAverage> metricsAverages = null;
         try {
-            List<String> sensorIDs = request.getSensorIDs();
-            if (CollectionUtils.isEmpty(sensorIDs)) {
-                metricsAverage = weatherDataDao.findOverallMetricsAverage(request.getMetricsName(), Utility.getStartDate(request.getStartDate()),
+            if (StringUtils.isBlank(request.getStartDate()) || StringUtils.isBlank(request.getEndDate())) {
+                metricsAverages = weatherDataDao.findMetricsAverageFromLatestMetricsData(request.getSensorIDs(), request.getMetricsNames());
+            } else if (CollectionUtils.isEmpty(request.getSensorIDs()) && CollectionUtils.isEmpty(request.getMetricsNames())) {
+                Utility.validateStartEndDates(request);
+                metricsAverages = weatherDataDao.findOverallMetricsAverage(Utility.getStartDate(request.getStartDate()),
+                        Utility.getEndDate(request.getEndDate()));
+            } else if (CollectionUtils.isEmpty(request.getSensorIDs())) {
+                Utility.validateStartEndDates(request);
+                metricsAverages = weatherDataDao.findMetricsAverageByMetricsName(request.getMetricsNames(), Utility.getStartDate(request.getStartDate()),
                         Utility.getEndDate(request.getEndDate()));
             } else {
-                metricsAverage = weatherDataDao.findMetricsAverageBySensorID(sensorIDs, request.getMetricsName(),
+                Utility.validateStartEndDates(request);
+                metricsAverages = weatherDataDao.findMetricsAverageBySensorIDMetricsName(request.getSensorIDs(), request.getMetricsNames(),
                         Utility.getStartDate(request.getStartDate()),
                         Utility.getEndDate(request.getEndDate()));
             }
 
             response.setStatus(Status.SUCCESS);
-            response.setMessage("Metrics average is successfully gotten!");
-            response.setMetricsAverage(metricsAverage);
+            response.setMessage("Success getting metrics average");
+            response.setMetricsAverages(metricsAverages);
 
+        } catch (WeatherDataServiceException ex) {
+            LOGGER.log(Level.WARNING, ex.getMessage());
+            response.setStatus(Status.FAILURE);
+            response.setMessage(ex.getMessage());
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, ex.getMessage());
             response.setStatus(Status.ERROR);
@@ -130,9 +151,11 @@ public class WeatherDataService {
         List<MetricsStatistic> metricsStatisticList;
 
         try {
+            Utility.validateStartEndDatesForFindStatistic(request);
+
             List<String> sensorIDs = request.getSensorIDs();
             if (CollectionUtils.isEmpty(sensorIDs)) {
-                metricsStatisticList = weatherDataDao.findOverallMetricsStatisticByMetricsName(request.getMetricsName(),Utility.getStartDate(request.getStartDate()),
+                metricsStatisticList = weatherDataDao.findOverallMetricsStatisticByMetricsName(request.getMetricsName(), Utility.getStartDate(request.getStartDate()),
                         Utility.getEndDate(request.getEndDate()));
             } else {
                 metricsStatisticList = weatherDataDao.findMetricsStatisticBySensorIDMetricsName(sensorIDs,
@@ -142,9 +165,13 @@ public class WeatherDataService {
             }
 
             response.setStatus(Status.SUCCESS);
-            response.setMessage("Metrics statistics are successfully gotten!");
+            response.setMessage("Success getting metrics statistics");
             response.setMetricsStatisticList(metricsStatisticList);
 
+        } catch (WeatherDataServiceException ex) {
+            LOGGER.log(Level.WARNING, ex.getMessage());
+            response.setStatus(Status.FAILURE);
+            response.setMessage(ex.getMessage());
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, ex.getMessage());
             response.setStatus(Status.ERROR);
@@ -153,22 +180,27 @@ public class WeatherDataService {
 
         return response;
     }
-    
+
     public FindAllMetricsStatisticResponse findAllMetricsStatistic(FindAllMetricsStatisticRequest request) {
 
         FindAllMetricsStatisticResponse response = new FindAllMetricsStatisticResponse();
         List<MetricsStatistic> metricsStatisticList;
 
         try {
+            Utility.validateStartEndDatesForFindStatistic(request);
 
             metricsStatisticList = weatherDataDao.findAllMetricsStatistic(
                     Utility.getStartDate(request.getStartDate()),
                     Utility.getEndDate(request.getEndDate()));
 
             response.setStatus(Status.SUCCESS);
-            response.setMessage("Metrics statistics are successfully gotten!");
+            response.setMessage("Success getting metrics statistics");
             response.setMetricsStatisticList(metricsStatisticList);
 
+        } catch (WeatherDataServiceException ex) {
+            LOGGER.log(Level.WARNING, ex.getMessage());
+            response.setStatus(Status.FAILURE);
+            response.setMessage(ex.getMessage());
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, ex.getMessage());
             response.setStatus(Status.ERROR);
@@ -177,6 +209,5 @@ public class WeatherDataService {
 
         return response;
     }
-
 
 }

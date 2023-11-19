@@ -9,13 +9,20 @@ import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
+import org.apache.commons.collections4.CollectionUtils;
 import weather.entity.WeatherData;
+import weather.model.MetricsAverage;
 import weather.model.MetricsStatistic;
 
 @Named
 @RequestScoped
 @Transactional(Transactional.TxType.NOT_SUPPORTED)
 public class WeatherDataDAO {
+
+    //These data will come from database table "SENSOR".
+    private static final List<String> SENSOR_IDS = List.of("sensorNo1", "sensorNo2", "sensorNo3", "sensorNo4", "sensorNo5");
+    //These data will come from database table "WEATHER_METRICS".
+    private static final List<String> METRICS_NAMES = List.of("temperature", "humidity", "windspeed");
 
     @PersistenceContext(unitName = "weatherPU")
     private EntityManager em;
@@ -49,25 +56,114 @@ public class WeatherDataDAO {
                 .getResultList();
     }
 
-    public BigDecimal findMetricsAverageBySensorID(List<String> sensorIDs, String metricsName, Date startDate, Date endDate) {
-        Number average = (Number) em.createNamedQuery("WeatherData.findMetricsAverageBySensorID")
-                .setParameter("sensorIDs", sensorIDs)
-                .setParameter("metricsName", metricsName)
-                .setParameter("startDate", startDate)
-                .setParameter("endDate", endDate).getSingleResult();
-        BigDecimal averageBigDecimal = new BigDecimal(average.toString());
+    public List<WeatherData> findLatestWeatherData(List<String> sensorIDs) {
+        if (CollectionUtils.isEmpty(sensorIDs)) {
+            sensorIDs = SENSOR_IDS;
+        }
 
-        return averageBigDecimal;
+        List<WeatherData> weatherDataList = new ArrayList<>();
+        for (String sensorID : sensorIDs) {
+            for (String metricsName : METRICS_NAMES) {
+                List<WeatherData> weatherDatasList = em.createNamedQuery("WeatherData.findWeatherDataBySensorIDMetricsName", WeatherData.class)
+                        .setParameter("sensorID", sensorID)
+                        .setParameter("metricsName", metricsName)
+                        .getResultList();
+                weatherDataList.add(weatherDatasList.get(0));
+            }
+        }
+
+        return weatherDataList;
     }
 
-    public BigDecimal findOverallMetricsAverage(String metricsName, Date startDate, Date endDate) {
-        Number average = (Number) em.createNamedQuery("WeatherData.findOverallMetricsAverage")
-                .setParameter("metricsName", metricsName)
-                .setParameter("startDate", startDate)
-                .setParameter("endDate", endDate).getSingleResult();
-        BigDecimal averageBigDecimal = new BigDecimal(average.toString());
+    public List<MetricsAverage> findMetricsAverageFromLatestMetricsData(List<String> sensorIDs, List<String> metricsNames) {
+        if (CollectionUtils.isEmpty(sensorIDs)) {
+            sensorIDs = SENSOR_IDS;
+        }
 
-        return averageBigDecimal;
+        if (CollectionUtils.isEmpty(metricsNames)) {
+            metricsNames = METRICS_NAMES;
+        }
+
+        List<MetricsAverage> metricsAverageList = new ArrayList<>();
+        for (String sensorID : sensorIDs) {
+            for (String metricsName : metricsNames) {
+                List<WeatherData> weatherDatasList = em.createNamedQuery("WeatherData.findWeatherDataBySensorIDMetricsName", WeatherData.class)
+                        .setParameter("sensorID", sensorID)
+                        .setParameter("metricsName", metricsName)
+                        .getResultList();
+                WeatherData metricsData = weatherDatasList.get(0);
+                MetricsAverage metricsAverage = new MetricsAverage();
+                metricsAverage.setSensorID(metricsData.getSensorID());
+                metricsAverage.setMetricsName(metricsData.getMetricsName());
+                metricsAverage.setAverage(metricsData.getMetricsValue());
+                metricsAverageList.add(metricsAverage);
+            }
+        }
+
+        return metricsAverageList;
+    }
+
+    public List<MetricsAverage> findMetricsAverageBySensorIDMetricsName(List<String> sensorIDs, List<String> metricsNames, Date startDate, Date endDate) {
+        List<Object[]> queryResults = em.createNamedQuery("WeatherData.findMetricsAverageBySensorIDMetricsName")
+                .setParameter("sensorIDs", sensorIDs)
+                .setParameter("metricsNames", metricsNames)
+                .setParameter("startDate", startDate)
+                .setParameter("endDate", endDate).getResultList();
+
+        List<MetricsAverage> metricsAverages = new ArrayList<>();
+
+        queryResults.stream().map(record -> {
+            MetricsAverage ms = new MetricsAverage();
+            ms.setSensorID((String) record[0]);
+            ms.setMetricsName((String) record[1]);
+            ms.setAverage(BigDecimal.valueOf((double) record[2]));
+            return ms;
+        }).forEachOrdered(ms -> {
+            metricsAverages.add(ms);
+        });
+
+        return metricsAverages;
+    }
+
+    public List<MetricsAverage> findMetricsAverageByMetricsName(List<String> metricsNames, Date startDate, Date endDate) {
+        List<Object[]> queryResults = em.createNamedQuery("WeatherData.findMetricsAverageByMetricsName")
+                .setParameter("metricsNames", metricsNames)
+                .setParameter("startDate", startDate)
+                .setParameter("endDate", endDate).getResultList();
+
+        List<MetricsAverage> metricsAverages = new ArrayList<>();
+
+        queryResults.stream().map(record -> {
+            MetricsAverage ms = new MetricsAverage();
+            ms.setSensorID((String) record[0]);
+            ms.setMetricsName((String) record[1]);
+            ms.setAverage(BigDecimal.valueOf((double) record[2]));
+            return ms;
+        }).forEachOrdered(ms -> {
+            metricsAverages.add(ms);
+        });
+
+        return metricsAverages;
+    }
+
+    public List<MetricsAverage> findOverallMetricsAverage(Date startDate, Date endDate) {
+        List<Object[]> queryResults = em.createNamedQuery("WeatherData.findOverallMetricsAverage")
+                .setParameter("startDate", startDate)
+                .setParameter("endDate", endDate).getResultList();
+
+        List<MetricsAverage> metricsAverages = new ArrayList<>();
+
+        queryResults.stream().map(record -> {
+            MetricsAverage ms = new MetricsAverage();
+            ms.setSensorID((String) record[0]);
+            ms.setMetricsName((String) record[1]);
+            ms.setAverage(BigDecimal.valueOf((double) record[2]));
+            return ms;
+        }).forEachOrdered(ms -> {
+            metricsAverages.add(ms);
+        });
+
+        return metricsAverages;
     }
 
     public List<MetricsStatistic> findMetricsStatisticBySensorIDMetricsName(List<String> sensorIDs, String metricsName, Date startDate, Date endDate) {
@@ -118,7 +214,7 @@ public class WeatherDataDAO {
 
         return metricsStatisticList;
     }
-    
+
     public List<MetricsStatistic> findAllMetricsStatistic(Date startDate, Date endDate) {
         List<Object[]> queryResults = em.createNamedQuery("WeatherData.findAllMetricsStatistic")
                 .setParameter("startDate", startDate)

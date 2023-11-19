@@ -1,14 +1,13 @@
 package weather.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
@@ -34,6 +33,7 @@ import weather.api.model.response.FindMetricsStatisticResponse;
 import weather.api.model.response.FindWeatherDataResponse;
 import weather.dao.WeatherDataDAO;
 import weather.entity.WeatherData;
+import weather.model.MetricsAverage;
 import weather.model.MetricsStatistic;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -59,7 +59,7 @@ public class WeatherDataServiceTest {
         AddWeatherDataResponse response = weatherDataService.addWeatherData(request);
 
         assertEquals(Status.SUCCESS, response.getStatus());
-        assertEquals("Weather data are successfully added!", response.getMessage());
+        assertEquals("Success adding weather data", response.getMessage());
         verify(weatherDataDao).addWeatherData(any(String.class), any(String.class), any(BigDecimal.class), any(Date.class));
     }
 
@@ -88,7 +88,25 @@ public class WeatherDataServiceTest {
         assertEquals(Status.ERROR, response.getStatus());
         assertEquals("System error in adding weather data", response.getMessage());
     }
-    
+
+    @Test
+    public void testFindLatestWeatherData() {
+        FindWeatherDataRequest request = createFindWeatherDataRequest();
+        request.setStartDate(null);
+        request.setEndDate(null);
+        List<WeatherData> mockWeatherDataList = Collections.singletonList(
+                new WeatherData("sensor1", "temperature", new BigDecimal(25.00), new Date())
+        );
+        when(weatherDataDao.findLatestWeatherData(any(List.class)))
+                .thenReturn(mockWeatherDataList);
+
+        FindWeatherDataResponse response = weatherDataService.findWeatherData(request);
+
+        assertEquals(Status.SUCCESS, response.getStatus());
+        assertEquals("Success getting weather data", response.getMessage());
+        assertEquals(mockWeatherDataList, response.getWeatherDataList());
+    }
+
     @Test
     public void testFindWeatherDataAllSensors() {
         FindWeatherDataRequest request = createFindWeatherDataRequest();
@@ -102,7 +120,7 @@ public class WeatherDataServiceTest {
         FindWeatherDataResponse response = weatherDataService.findWeatherData(request);
 
         assertEquals(Status.SUCCESS, response.getStatus());
-        assertEquals("Weather data are successfully gotten!", response.getMessage());
+        assertEquals("Success getting weather data", response.getMessage());
         assertEquals(mockWeatherDataList, response.getWeatherDataList());
     }
 
@@ -118,44 +136,92 @@ public class WeatherDataServiceTest {
         FindWeatherDataResponse response = weatherDataService.findWeatherData(request);
 
         assertEquals(Status.SUCCESS, response.getStatus());
-        assertEquals("Weather data are successfully gotten!", response.getMessage());
+        assertEquals("Success getting weather data", response.getMessage());
         assertEquals(mockWeatherDataList, response.getWeatherDataList());
     }
-    
-    @Test
-    public void testFindMetricAverageOverall() {
-        when(weatherDataDao.findOverallMetricsAverage(anyString(), any(), any()))
-                .thenReturn(new BigDecimal("25.5"));
 
+    @Test
+    public void testFindLatestMetricsAverage() {
         FindMetricsAverageRequest request = new FindMetricsAverageRequest();
-        request.setMetricsName("temperature");
+        request.setSensorIDs(Arrays.asList("sensor1", "sensor2"));
+        request.setMetricsNames(Arrays.asList("temperature", "humidity"));
+
+        List<MetricsAverage> mockMetricsAverageList = Collections.singletonList(
+                new MetricsAverage("sensor1", "temperature", new BigDecimal(25.00))
+        );
+
+        when(weatherDataDao.findMetricsAverageFromLatestMetricsData(eq(request.getSensorIDs()), eq(request.getMetricsNames())))
+                .thenReturn(mockMetricsAverageList);
+
         FindMetricsAverageResponse response = weatherDataService.findMetricsAverage(request);
 
-        verify(weatherDataDao, times(1)).findOverallMetricsAverage(anyString(), any(), any());
-
+        assertNotNull(response);
         assertEquals(Status.SUCCESS, response.getStatus());
-        assertEquals("Metrics average is successfully gotten!", response.getMessage());
-        assertEquals(new BigDecimal("25.5"), response.getMetricsAverage());
+        assertEquals(mockMetricsAverageList, response.getMetricsAverages());
+        verify(weatherDataDao).findMetricsAverageFromLatestMetricsData(eq(request.getSensorIDs()), eq(request.getMetricsNames()));
     }
 
     @Test
-    public void testFindMetricAverageBySensor() {
-        when(weatherDataDao.findMetricsAverageBySensorID(anyList(), anyString(), any(), any()))
-                .thenReturn(new BigDecimal("18.9"));
-
+    public void testFindOverallMetricsAverage() {
         FindMetricsAverageRequest request = new FindMetricsAverageRequest();
-        List<String> sensorIDs = new ArrayList<>();
-        sensorIDs.add("Sensor01");
-        request.setSensorIDs(sensorIDs);
-        request.setMetricsName("temperature");
+        request.setStartDate("2023-11-01");
+        request.setEndDate("2023-11-16");
+
+        List<MetricsAverage> mockMetricsAverageList = Collections.singletonList(
+                new MetricsAverage("sensor1", "temperature", new BigDecimal(25.00))
+        );
+
+        when(weatherDataDao.findOverallMetricsAverage(any(Date.class), any(Date.class)))
+                .thenReturn(mockMetricsAverageList);
+
         FindMetricsAverageResponse response = weatherDataService.findMetricsAverage(request);
 
-        verify(weatherDataDao, times(1))
-                .findMetricsAverageBySensorID(anyList(), anyString(), any(), any());
-
+        assertNotNull(response);
         assertEquals(Status.SUCCESS, response.getStatus());
-        assertEquals("Metrics average is successfully gotten!", response.getMessage());
-        assertEquals(new BigDecimal("18.9"), response.getMetricsAverage());
+        assertEquals(mockMetricsAverageList, response.getMetricsAverages());
+    }
+
+    @Test
+    public void testFindMetricsAverageByMetricsName() {
+        FindMetricsAverageRequest request = new FindMetricsAverageRequest();
+        request.setMetricsNames(Arrays.asList("temperature", "humidity"));
+        request.setStartDate("2023-11-01");
+        request.setEndDate("2023-11-16");
+
+        List<MetricsAverage> mockMetricsAverageList = Collections.singletonList(
+                new MetricsAverage("sensor1", "temperature", new BigDecimal(25.00))
+        );
+
+        when(weatherDataDao.findMetricsAverageByMetricsName(any(List.class), any(Date.class), any(Date.class)))
+                .thenReturn(mockMetricsAverageList);
+
+        FindMetricsAverageResponse response = weatherDataService.findMetricsAverage(request);
+
+        assertNotNull(response);
+        assertEquals(Status.SUCCESS, response.getStatus());
+        assertEquals(mockMetricsAverageList, response.getMetricsAverages());
+    }
+
+    @Test
+    public void testfindMetricsAverageBySensorIDMetricsName() {
+        FindMetricsAverageRequest request = new FindMetricsAverageRequest();
+        request.setSensorIDs(Arrays.asList("sensor1", "sensor2"));
+        request.setMetricsNames(Arrays.asList("temperature", "humidity"));
+        request.setStartDate("2023-11-01");
+        request.setEndDate("2023-11-16");
+
+        List<MetricsAverage> mockMetricsAverageList = Collections.singletonList(
+                new MetricsAverage("sensor1", "temperature", new BigDecimal(25.00))
+        );
+
+        when(weatherDataDao.findMetricsAverageBySensorIDMetricsName(any(List.class), any(List.class), any(Date.class), any(Date.class)))
+                .thenReturn(mockMetricsAverageList);
+
+        FindMetricsAverageResponse response = weatherDataService.findMetricsAverage(request);
+
+        assertNotNull(response);
+        assertEquals(Status.SUCCESS, response.getStatus());
+        assertEquals(mockMetricsAverageList, response.getMetricsAverages());
     }
 
     @Test
@@ -165,13 +231,13 @@ public class WeatherDataServiceTest {
         List<MetricsStatistic> mockMetricStatisticList = Arrays.asList(new MetricsStatistic("sensor1", "temperature", new BigDecimal(20.00), new BigDecimal(25.00), new BigDecimal(150.00), new BigDecimal(22.50)),
                 new MetricsStatistic("sensor2", "temperature", new BigDecimal(21.00), new BigDecimal(26.00), new BigDecimal(147.00), new BigDecimal(23.50))
         );
-        when(weatherDataDao.findOverallMetricsStatisticByMetricsName(anyString(),any(Date.class), any(Date.class)))
+        when(weatherDataDao.findOverallMetricsStatisticByMetricsName(anyString(), any(Date.class), any(Date.class)))
                 .thenReturn(mockMetricStatisticList);
 
         FindMetricsStatisticResponse response = weatherDataService.findMetricsStatistic(request);
 
         assertEquals(Status.SUCCESS, response.getStatus());
-        assertEquals("Metrics statistics are successfully gotten!", response.getMessage());
+        assertEquals("Success getting metrics statistics", response.getMessage());
         assertEquals(mockMetricStatisticList, response.getMetricsStatisticList());
     }
 
@@ -186,10 +252,10 @@ public class WeatherDataServiceTest {
         FindMetricsStatisticResponse response = weatherDataService.findMetricsStatistic(request);
 
         assertEquals(Status.SUCCESS, response.getStatus());
-        assertEquals("Metrics statistics are successfully gotten!", response.getMessage());
+        assertEquals("Success getting metrics statistics", response.getMessage());
         assertEquals(mockMetricStatisticList, response.getMetricsStatisticList());
     }
-    
+
     @Test
     public void testListOverallMetricsStatistic() {
         FindAllMetricsStatisticRequest request = new FindAllMetricsStatisticRequest();
@@ -204,10 +270,10 @@ public class WeatherDataServiceTest {
         FindAllMetricsStatisticResponse response = weatherDataService.findAllMetricsStatistic(request);
 
         assertEquals(Status.SUCCESS, response.getStatus());
-        assertEquals("Metrics statistics are successfully gotten!", response.getMessage());
+        assertEquals("Success getting metrics statistics", response.getMessage());
         assertEquals(mockMetricStatisticList, response.getMetricsStatisticList());
     }
-    
+
     private AddWeatherDataRequest createAddWeatherDataRequest() {
         AddWeatherDataRequest request = new AddWeatherDataRequest();
         request.setSensorID("sensor123");
@@ -218,7 +284,7 @@ public class WeatherDataServiceTest {
     private Map<String, BigDecimal> createWeatherDataMap() {
         return Collections.singletonMap("temperature", BigDecimal.valueOf(25.0));
     }
-    
+
     private FindWeatherDataRequest createFindWeatherDataRequest() {
         FindWeatherDataRequest request = new FindWeatherDataRequest();
         request.setSensorIDs(Arrays.asList("sensor1", "sensor2"));
@@ -226,7 +292,7 @@ public class WeatherDataServiceTest {
         request.setEndDate("2023-11-16");
         return request;
     }
-        
+
     private FindMetricsStatisticRequest createFindMetricStatisticRequest() {
         FindMetricsStatisticRequest request = new FindMetricsStatisticRequest();
         request.setSensorIDs(Arrays.asList("sensor1", "sensor2"));
