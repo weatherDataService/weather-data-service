@@ -50,12 +50,14 @@ Step#7: Check the response in JSON format from Postman.
 Create the following entities in Oracle database:
 
 1. Create a new sequence SEQ_WEATHER_DATA_ID using the following DDL. This sequence helps to generate “DATA_ID” column value in WEATHER_DATA table (Primary key). 
+```
+CREATE SEQUENCE WEATHER_DOMAIN.SEQ_WEATHER_DATA_ID
+START WITH     1000
+INCREMENT BY   1
+NOCACHE
+NOCYCLE;
+```
 
-> CREATE SEQUENCE WEATHER_DOMAIN.SEQ_WEATHER_DATA_ID
-> START WITH     1000
-> INCREMENT BY   1
-> NOCACHE
-> NOCYCLE;
 
 2. Create a new table WEATHER_METRICS using the following DDL. This table defines weather metrics names such as temperature, humidity, wind speed, etc.
 
