@@ -15,10 +15,10 @@ Weather Data Service is a RESTful web service providing five REST APIs that can 
 # Description of Five REST APIs:
 
 API#1: http://127.0.0.1/weather/weatherdata/add (POST)
-A sensor can call this API endpoint with a request payload containing all weather metrics values measured by this sensor at a specific time, and the API will store these data in the WEATHER_DATA database table for this sensor. The sensor’s request payload includes sensor ID, a collection of metricsName-metricsValue pairs and the time of measurement. All three attributes in the payload are required.
+A sensor can call this API endpoint with a request payload containing all kinds of weather metrics values measured by this sensor at a specific time, and the API will store these data in the WEATHER_DATA database table for this sensor. The sensor’s request payload includes sensor ID, a collection of metricsName-metricsValue pairs and the time of measurement. All three attributes in the payload are required.
 
 API#2: http://127.0.0.1/weather/weatherdata/get  (POST)
-A client can call this API endpoint to get all weather metrics data of one, more or all sensors in a specific period of time. The client’s request payload may include an array of sensor IDs, start date and end date. All three attributes in the payload are optional. This API has three functions: 1) If the request payload includes one or more sensor IDs, the API’s response will include all the weather metrics data of all the selected sensor IDs. 2) If the payload doesn’t include any sensor ID, the API’s response will include all the weather metrics data of all sensor IDs. 3) If the start date and end date are not provided in the payload, all the weather metrics data for one, more or all sensors in the last one day will be provided in the response. All the weather metrics data in the response will be ordered by sensor ID, metrics name, and created/measured date.
+A client can call this API endpoint to get all kinds of weather metrics data from one, more or all sensors in a specific period of time. The client’s request payload may include an array of sensor IDs, start date and end date. All three attributes in the payload are optional. This API has three functions: 1) If the request payload includes one or more sensor IDs, the API’s response will include all kinds of weather metrics data from all the selected sensors. 2) If the payload doesn’t include any sensor ID, the API’s response will include all kinds of weather metrics data from all sensors. 3) If either start date or end date (or both) are not provided in the payload, the latest weather metrics data of all kinds from one, more or all sensors will be provided in the response. If both start date and end date are provided in the payload, all kinds of weather metrics data in the response will be ordered by sensor ID, metrics name, and measured date/time.
 
 API#3. http://127.0.0.1/weather/metricsaverage/find (POST) 
 A client can call this API endpoint to get the average value of a specific single weather metrics for one, more or all sensors in a specific period of time. The client’s request payload may include an array of sensor IDs, a metrics name, start date and end date. Only the metrics name in the payload is required. This API has three functions: 1) If the request payload includes one or more sensor IDs, the API’s response will include the average value of the selected single weather metrics for all the selected sensor IDs. 2) If the payload doesn’t include any sensor ID, the API’s response will include the average value of the selected single weather metrics for all the sensor IDs. 3) If the start date and end date are not provided in the payload, the average value of the selected single weather metrics for one, more or all sensors in the last one day will be provided in the response.
@@ -57,31 +57,37 @@ INCREMENT BY   1
 NOCACHE
 NOCYCLE;
 ```
-
-
 2. Create a new table WEATHER_METRICS using the following DDL. This table defines weather metrics names such as temperature, humidity, wind speed, etc.
-
-> CREATE TABLE WEATHER_DOMAIN.WEATHER_METRICS (	
->       METRIC_NAME VARCHAR2(20) NOT NULL, 
->       DESCRIPTION VARCHAR2(100) NULL,
->       CREATED_DATE DATE NULL,
->       CONSTRAINT WEATHER_METRICS_PK PRIMARY KEY (METRICS_NAME)
-> )
-
-3. Create a new table WEATHER_DATA using the following DDL. This table contains all whether metrics values such as temperature, humidity, wind speed, etc. collected from all sensors at different times.
-
-> CREATE TABLE PAYWALL_TEST.WEATHER_DATA (   
->      DATA_ID NUMBER NOT NULL,
->      SENSOR_ID VARCHAR2(20) NOT NULL,
->      METRIC_NAME VARCHAR2(20) NOT NULL, 
->      METRIC_VALUE NUMBER NOT NULL,
->      CREATED_DATE DATE NOT NULL, 
->      CONSTRAINT WEATHER_DATA_PK PRIMARY KEY (DATA_ID), 
->      CONSTRAINT WEATHER_DATA_FK FOREIGN KEY (METRIC_NAME)
->      REFERENCES WEATHER_METRICS(METRIC_NAME)
-> )
-
-4. We may need to create a SENSORS table defining all sensors. Due to the time limit, I will not create this table at this time.
-
-
+```
+CREATE TABLE WEATHER_DOMAIN.WEATHER_METRICS (	
+      METRICS_NAME VARCHAR2(20) NOT NULL, 
+      DESCRIPTION VARCHAR2(100) NULL,
+      CREATED_DATE DATE NULL,
+      CONSTRAINT WEATHER_METRICS_PK PRIMARY KEY (METRICS_NAME)
+)
+```
+3. Create a new table WEATHER_SENSOR using the following DDL. This table defines weather sensor ID and location.
+```
+CREATE TABLE WEATHER_DOMAIN.WEATHER_SENSOR (	
+      SENSOR_ID VARCHAR2(20) NOT NULL, 
+      LOCATION VARCHAR2(100) NULL,
+      CREATED_DATE DATE NULL,
+      CONSTRAINT WEATHER_SENSOR_PK PRIMARY KEY (SENSOR_ID)
+)
+```
+4. Create a new table WEATHER_DATA using the following DDL. This table contains all whether metrics values such as temperature, humidity, wind speed, etc. collected from all sensors at different times.
+```
+CREATE TABLE PAYWALL_TEST.WEATHER_DATA (   
+     DATA_ID NUMBER NOT NULL,
+     SENSOR_ID VARCHAR2(20) NOT NULL,
+     METRICS_NAME VARCHAR2(20) NOT NULL, 
+     METRICS_VALUE NUMBER NOT NULL,
+     CREATED_DATE DATE, 
+     CONSTRAINT WEATHER_DATA_PK PRIMARY KEY (DATA_ID), 
+     CONSTRAINT WEATHER_DATA_FK_A FOREIGN KEY (METRIC_NAME)
+     REFERENCES WEATHER_METRICS(METRIC_NAME),
+     CONSTRAINT WEATHER_DATA_FK_B FOREIGN KEY (SENSOR_ID)
+     REFERENCES WEATHER_SENSOR(SENSOR_ID)
+)
+```
 
