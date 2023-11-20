@@ -77,7 +77,7 @@ CREATE TABLE WEATHER_DOMAIN.WEATHER_SENSOR (
 ```
 4. Create a new table WEATHER_DATA using the following DDL. This table contains all whether metrics values such as temperature, humidity, wind speed, etc. collected from all sensors at different times.
 ```
-CREATE TABLE PAYWALL_TEST.WEATHER_DATA (   
+CREATE TABLE WEATHER_DOMAIN.WEATHER_DATA (   
      DATA_ID NUMBER NOT NULL,
      SENSOR_ID VARCHAR2(20) NOT NULL,
      METRICS_NAME VARCHAR2(20) NOT NULL, 
