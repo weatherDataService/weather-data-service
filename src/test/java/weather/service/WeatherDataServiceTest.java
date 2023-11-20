@@ -157,7 +157,7 @@ public class WeatherDataServiceTest {
 
         assertNotNull(response);
         assertEquals(Status.SUCCESS, response.getStatus());
-        assertEquals(mockMetricsAverageList, response.getMetricsAverages());
+        assertEquals(mockMetricsAverageList, response.getMetricsAverageList());
         verify(weatherDataDao).findMetricsAverageFromLatestMetricsData(eq(request.getSensorIDs()), eq(request.getMetricsNames()));
     }
 
@@ -178,7 +178,7 @@ public class WeatherDataServiceTest {
 
         assertNotNull(response);
         assertEquals(Status.SUCCESS, response.getStatus());
-        assertEquals(mockMetricsAverageList, response.getMetricsAverages());
+        assertEquals(mockMetricsAverageList, response.getMetricsAverageList());
     }
 
     @Test
@@ -199,7 +199,7 @@ public class WeatherDataServiceTest {
 
         assertNotNull(response);
         assertEquals(Status.SUCCESS, response.getStatus());
-        assertEquals(mockMetricsAverageList, response.getMetricsAverages());
+        assertEquals(mockMetricsAverageList, response.getMetricsAverageList());
     }
 
     @Test
@@ -221,7 +221,7 @@ public class WeatherDataServiceTest {
 
         assertNotNull(response);
         assertEquals(Status.SUCCESS, response.getStatus());
-        assertEquals(mockMetricsAverageList, response.getMetricsAverages());
+        assertEquals(mockMetricsAverageList, response.getMetricsAverageList());
     }
 
     @Test

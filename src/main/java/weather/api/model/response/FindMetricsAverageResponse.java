@@ -7,14 +7,14 @@ import weather.model.MetricsAverage;
 @JsonInclude(value = JsonInclude.Include.NON_EMPTY)
 public class FindMetricsAverageResponse extends RestResponseBase {
 
-    private List<MetricsAverage> metricsAverages;
+    private List<MetricsAverage> metricsAverageList;
 
-    public List<MetricsAverage> getMetricsAverages() {
-        return metricsAverages;
+    public List<MetricsAverage> getMetricsAverageList() {
+        return metricsAverageList;
     }
 
-    public void setMetricsAverages(List<MetricsAverage> metricsAverages) {
-        this.metricsAverages = metricsAverages;
+    public void setMetricsAverageList(List<MetricsAverage> metricsAverageList) {
+        this.metricsAverageList = metricsAverageList;
     }
     
 }

@@ -130,7 +130,7 @@ public class WeatherDataService {
 
             response.setStatus(Status.SUCCESS);
             response.setMessage("Success getting metrics average");
-            response.setMetricsAverages(metricsAverages);
+            response.setMetricsAverageList(metricsAverages);
 
         } catch (WeatherDataServiceException ex) {
             LOGGER.log(Level.WARNING, ex.getMessage());
