@@ -277,7 +277,7 @@ public class WeatherDataServiceTest {
     private AddWeatherDataRequest createAddWeatherDataRequest() {
         AddWeatherDataRequest request = new AddWeatherDataRequest();
         request.setSensorID("sensor123");
-        request.setMeasureTime(new Date());
+        request.setMeasureTime("2023-12-01");
         return request;
     }
 

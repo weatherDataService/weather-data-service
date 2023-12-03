@@ -46,7 +46,7 @@ public class Utility {
     }
 
     public static void validateStartEndDates(FindWeatherDataRequestBase request) throws WeatherDataServiceException {
-        if (StringUtils.isBlank(request.getStartDate()) && StringUtils.isBlank(request.getEndDate())) {
+        if (!StringUtils.isBlank(request.getStartDate()) && !StringUtils.isBlank(request.getEndDate())) {
             if (getDateFromString(request.getStartDate()).after(getDateFromString(request.getEndDate()))) {
                 throw new WeatherDataServiceException("Start date is after end date");
             }

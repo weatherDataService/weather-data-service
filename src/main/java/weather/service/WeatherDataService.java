@@ -51,7 +51,7 @@ public class WeatherDataService {
             }
 
             for (Entry<String, BigDecimal> entry : weatherDataMap.entrySet()) {
-                weatherDataDao.addWeatherData(request.getSensorID(), entry.getKey(), entry.getValue(), request.getMeasureTime());
+                weatherDataDao.addWeatherData(request.getSensorID(), entry.getKey(), entry.getValue(), Utility.getDateFromString(request.getMeasureTime()));
             }
 
             response.setStatus(Status.SUCCESS);
@@ -110,6 +110,7 @@ public class WeatherDataService {
     public FindMetricsAverageResponse findMetricsAverage(FindMetricsAverageRequest request) {
         FindMetricsAverageResponse response = new FindMetricsAverageResponse();
         List<MetricsAverage> metricsAverages = null;
+
         try {
             if (StringUtils.isBlank(request.getStartDate()) || StringUtils.isBlank(request.getEndDate())) {
                 metricsAverages = weatherDataDao.findMetricsAverageFromLatestMetricsData(request.getSensorIDs(), request.getMetricsNames());
@@ -151,6 +152,7 @@ public class WeatherDataService {
         List<MetricsStatistic> metricsStatisticList;
 
         try {
+
             Utility.validateStartEndDatesForFindStatistic(request);
 
             List<String> sensorIDs = request.getSensorIDs();
@@ -187,6 +189,7 @@ public class WeatherDataService {
         List<MetricsStatistic> metricsStatisticList;
 
         try {
+
             Utility.validateStartEndDatesForFindStatistic(request);
 
             metricsStatisticList = weatherDataDao.findAllMetricsStatistic(

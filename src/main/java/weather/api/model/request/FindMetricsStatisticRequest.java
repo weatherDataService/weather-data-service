@@ -1,12 +1,12 @@
 package weather.api.model.request;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import org.hibernate.validator.constraints.NotEmpty;
+import javax.validation.constraints.NotEmpty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class FindMetricsStatisticRequest extends FindWeatherDataRequestBase {
 
-    @NotEmpty(message = "Missing sensor ID")
+    @NotEmpty(message = "Missing metrics name")
     private String metricsName;
 
     public String getMetricsName() {

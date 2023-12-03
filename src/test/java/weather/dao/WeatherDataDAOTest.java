@@ -212,94 +212,101 @@ public class WeatherDataDAOTest {
     }
 
     @Test
-    public void testFindMetricsStatisticBySensorIDMetricsName() {
-        Query query = mock(Query.class);
-        when(entityManager.createNamedQuery(eq("WeatherData.findMetricsStatisticBySensorIDMetricsName")))
-                .thenReturn(query);
-        when(query.setParameter(eq("sensorIDs"), anyList())).thenReturn(query);
-        when(query.setParameter(eq("metricsName"), anyString())).thenReturn(query);
-        when(query.setParameter(eq("startDate"), any(Date.class))).thenReturn(query);
-        when(query.setParameter(eq("endDate"), any(Date.class))).thenReturn(query);
+    public void testFindMetricsStatisticBySensorIDMetricsNameOption() {
+        Query mockedQuery = mock(Query.class);
+        when(entityManager.createNamedQuery(eq("WeatherData.findMetricsStatisticBySensorIDMetricsName"))).thenReturn(mockedQuery);
+        when(mockedQuery.setParameter(eq("sensorIDs"), anyList())).thenReturn(mockedQuery);
+        when(mockedQuery.setParameter(eq("metricsName"), anyString())).thenReturn(mockedQuery);
+        when(mockedQuery.setParameter(eq("startDate"), any(Date.class))).thenReturn(mockedQuery);
+        when(mockedQuery.setParameter(eq("endDate"), any(Date.class))).thenReturn(mockedQuery);
 
-        List<Object[]> queryResults = Arrays.asList(
-                new Object[]{"sensor1", "temperature", 10.0, 20.0, 30.0, 15.0},
-                new Object[]{"sensor2", "temperature", 15.0, 25.0, 35.0, 20.0}
-        );
-
-        when(query.getResultList()).thenReturn(queryResults);
-
-        List<MetricsStatistic> expectedResult = Arrays.asList(
-                createMetricStatistic("sensor1", "temperature", 10.0, 20.0, 30.0, 15.0),
-                createMetricStatistic("sensor2", "temperature", 15.0, 25.0, 35.0, 20.0)
-        );
+        List<Object[]> queryResults = new ArrayList<>();
+        queryResults.add(new Object[]{"Sensor1", "Temperature", BigDecimal.valueOf(10), BigDecimal.valueOf(30), BigDecimal.valueOf(150), 15.0});
+        when(mockedQuery.getResultList()).thenReturn(queryResults);
 
         List<MetricsStatistic> result = weatherDataDAO.findMetricsStatisticBySensorIDMetricsName(
-                Arrays.asList("sensor1", "sensor2"), "temperature", new Date(), new Date());
+                List.of("Sensor1", "Sensor2"), "Temperature", new Date(), new Date());
 
-        assertNotNull(result);
+        verify(entityManager).createNamedQuery(eq("WeatherData.findMetricsStatisticBySensorIDMetricsName"));
+        verify(mockedQuery).setParameter(eq("sensorIDs"), anyList());
+        verify(mockedQuery).setParameter(eq("metricsName"), eq("Temperature"));
+        verify(mockedQuery).setParameter(eq("startDate"), any(Date.class));
+        verify(mockedQuery).setParameter(eq("endDate"), any(Date.class));
+
+        assertEquals(1, result.size());
+        assertEquals("Sensor1", result.get(0).getSensorID());
+        assertEquals("Temperature", result.get(0).getMetricsName());
+        assertEquals(BigDecimal.valueOf(10), result.get(0).getMinValue());
+        assertEquals(BigDecimal.valueOf(30), result.get(0).getMaxValue());
+        assertEquals(BigDecimal.valueOf(150), result.get(0).getSum());
+        assertEquals(BigDecimal.valueOf(15.0), result.get(0).getAverage());
     }
 
     @Test
     public void testFindOverallMetricsStatisticByMetricsName() {
-        Query query = mock(Query.class);
-        when(entityManager.createNamedQuery(eq("WeatherData.findOverallMetricsStatisticByMetricsName")))
-                .thenReturn(query);
-        when(query.setParameter(eq("metricsName"), anyString())).thenReturn(query);
-        when(query.setParameter(eq("startDate"), any(Date.class))).thenReturn(query);
-        when(query.setParameter(eq("endDate"), any(Date.class))).thenReturn(query);
+        Query mockedQuery = mock(Query.class);
+        when(entityManager.createNamedQuery(eq("WeatherData.findOverallMetricsStatisticByMetricsName"))).thenReturn(mockedQuery);
+        when(mockedQuery.setParameter(eq("metricsName"), anyString())).thenReturn(mockedQuery);
+        when(mockedQuery.setParameter(eq("startDate"), any(Date.class))).thenReturn(mockedQuery);
+        when(mockedQuery.setParameter(eq("endDate"), any(Date.class))).thenReturn(mockedQuery);
 
-        List<Object[]> queryResults = Arrays.asList(
-                new Object[]{"sensor1", "temperature", 10.0, 20.0, 30.0, 15.0},
-                new Object[]{"sensor2", "temperature", 15.0, 25.0, 35.0, 20.0}
-        );
+        List<Object[]> queryResults = new ArrayList<>();
+        queryResults.add(new Object[]{"Sensor1", "Temperature", BigDecimal.valueOf(10), BigDecimal.valueOf(30), BigDecimal.valueOf(150), 15.0});
+        when(mockedQuery.getResultList()).thenReturn(queryResults);
 
-        when(query.getResultList()).thenReturn(queryResults);
+        List<MetricsStatistic> result = weatherDataDAO.findOverallMetricsStatisticByMetricsName(
+                "Temperature", new Date(), new Date());
 
-        List<MetricsStatistic> expectedResult = Arrays.asList(
-                createMetricStatistic("sensor1", "temperature", 10.0, 20.0, 30.0, 15.0),
-                createMetricStatistic("sensor2", "temperature", 15.0, 25.0, 35.0, 20.0)
-        );
+        verify(entityManager).createNamedQuery(eq("WeatherData.findOverallMetricsStatisticByMetricsName"));
+        verify(mockedQuery).setParameter(eq("metricsName"), eq("Temperature"));
+        verify(mockedQuery).setParameter(eq("startDate"), any(Date.class));
+        verify(mockedQuery).setParameter(eq("endDate"), any(Date.class));
 
-        List<MetricsStatistic> result = weatherDataDAO.findOverallMetricsStatisticByMetricsName("temperature", new Date(), new Date());
-
-        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals("Sensor1", result.get(0).getSensorID());
+        assertEquals("Temperature", result.get(0).getMetricsName());
+        assertEquals(BigDecimal.valueOf(10), result.get(0).getMinValue());
+        assertEquals(BigDecimal.valueOf(30), result.get(0).getMaxValue());
+        assertEquals(BigDecimal.valueOf(150), result.get(0).getSum());
+        assertEquals(BigDecimal.valueOf(15.0), result.get(0).getAverage());
     }
 
     @Test
     public void testFindAllMetricsStatistic() {
-        Query query = mock(Query.class);
-        when(entityManager.createNamedQuery(eq("WeatherData.findAllMetricsStatistic")))
-                .thenReturn(query);
-        when(query.setParameter(eq("startDate"), any(Date.class))).thenReturn(query);
-        when(query.setParameter(eq("endDate"), any(Date.class))).thenReturn(query);
+        Query mockedQuery = mock(Query.class);
+        when(entityManager.createNamedQuery(eq("WeatherData.findAllMetricsStatistic"))).thenReturn(mockedQuery);
+        when(mockedQuery.setParameter(eq("startDate"), any(Date.class))).thenReturn(mockedQuery);
+        when(mockedQuery.setParameter(eq("endDate"), any(Date.class))).thenReturn(mockedQuery);
 
-        List<Object[]> queryResults = Arrays.asList(
-                new Object[]{"sensor1", "temperature", 10.0, 20.0, 30.0, 15.0},
-                new Object[]{"sensor2", "temperature", 15.0, 25.0, 35.0, 20.0}
-        );
-
-        when(query.getResultList()).thenReturn(queryResults);
-
-        List<MetricsStatistic> expectedResult = Arrays.asList(
-                createMetricStatistic("sensor1", "temperature", 10.0, 20.0, 30.0, 15.0),
-                createMetricStatistic("sensor2", "temperature", 15.0, 25.0, 35.0, 20.0)
-        );
+        List<Object[]> queryResults = new ArrayList<>();
+        queryResults.add(new Object[]{"Sensor1", "Temperature", BigDecimal.valueOf(10), BigDecimal.valueOf(30), BigDecimal.valueOf(150), 15.0});
+        when(mockedQuery.getResultList()).thenReturn(queryResults);
 
         List<MetricsStatistic> result = weatherDataDAO.findAllMetricsStatistic(new Date(), new Date());
 
-        assertNotNull(result);
+        verify(entityManager).createNamedQuery(eq("WeatherData.findAllMetricsStatistic"));
+        verify(mockedQuery).setParameter(eq("startDate"), any(Date.class));
+        verify(mockedQuery).setParameter(eq("endDate"), any(Date.class));
+
+        assertEquals(1, result.size());
+        assertEquals("Sensor1", result.get(0).getSensorID());
+        assertEquals("Temperature", result.get(0).getMetricsName());
+        assertEquals(BigDecimal.valueOf(10), result.get(0).getMinValue());
+        assertEquals(BigDecimal.valueOf(30), result.get(0).getMaxValue());
+        assertEquals(BigDecimal.valueOf(150), result.get(0).getSum());
+        assertEquals(BigDecimal.valueOf(15.0), result.get(0).getAverage());
     }
 
     private MetricsStatistic createMetricStatistic(String sensorID, String metricName,
-            double minValue, double maxValue,
-            double sum, double average) {
+            BigDecimal minValue, BigDecimal maxValue,
+            BigDecimal sum, BigDecimal average) {
         MetricsStatistic ms = new MetricsStatistic();
         ms.setSensorID(sensorID);
         ms.setMetricsName(metricName);
-        ms.setMinValue(BigDecimal.valueOf(minValue));
-        ms.setMaxValue(BigDecimal.valueOf(maxValue));
-        ms.setSum(BigDecimal.valueOf(sum));
-        ms.setAverage(BigDecimal.valueOf(average));
+        ms.setMinValue(minValue);
+        ms.setMaxValue(maxValue);
+        ms.setSum(sum);
+        ms.setAverage(average);
         return ms;
     }
 

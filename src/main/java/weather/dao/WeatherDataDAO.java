@@ -20,9 +20,9 @@ import weather.model.MetricsStatistic;
 public class WeatherDataDAO {
 
     //These data will come from database table "WEATHER_SENSOR".
-    private static final List<String> SENSOR_IDS = List.of("sensorNo1", "sensorNo2", "sensorNo3", "sensorNo4", "sensorNo5");
+    private static final List<String> SENSOR_IDS = List.of("S01", "S02", "S03", "S04", "S05");
     //These data will come from database table "WEATHER_METRICS".
-    private static final List<String> METRICS_NAMES = List.of("temperature", "humidity", "windspeed");
+    private static final List<String> METRICS_NAMES = List.of("temp", "hum", "wp");
 
     @PersistenceContext(unitName = "weatherPU")
     private EntityManager em;
@@ -57,7 +57,7 @@ public class WeatherDataDAO {
     }
 
     public List<WeatherData> findLatestWeatherData(List<String> sensorIDs) {
-        if (CollectionUtils.isEmpty(sensorIDs)) {
+        if (sensorIDs == null || sensorIDs.isEmpty()) {
             sensorIDs = SENSOR_IDS;
         }
 
@@ -68,6 +68,9 @@ public class WeatherDataDAO {
                         .setParameter("sensorID", sensorID)
                         .setParameter("metricsName", metricsName)
                         .getResultList();
+                if (weatherDatasList == null || weatherDatasList.isEmpty()) {
+                    continue;
+                }
                 weatherDataList.add(weatherDatasList.get(0));
             }
         }
@@ -76,11 +79,11 @@ public class WeatherDataDAO {
     }
 
     public List<MetricsAverage> findMetricsAverageFromLatestMetricsData(List<String> sensorIDs, List<String> metricsNames) {
-        if (CollectionUtils.isEmpty(sensorIDs)) {
+        if (sensorIDs == null || sensorIDs.isEmpty()) {
             sensorIDs = SENSOR_IDS;
         }
 
-        if (CollectionUtils.isEmpty(metricsNames)) {
+        if (metricsNames == null || metricsNames.isEmpty()) {
             metricsNames = METRICS_NAMES;
         }
 
@@ -91,6 +94,9 @@ public class WeatherDataDAO {
                         .setParameter("sensorID", sensorID)
                         .setParameter("metricsName", metricsName)
                         .getResultList();
+                if (weatherDatasList == null || weatherDatasList.isEmpty()) {
+                    continue;
+                }
                 WeatherData metricsData = weatherDatasList.get(0);
                 MetricsAverage metricsAverage = new MetricsAverage();
                 metricsAverage.setSensorID(metricsData.getSensorID());
@@ -179,9 +185,9 @@ public class WeatherDataDAO {
             MetricsStatistic ms = new MetricsStatistic();
             ms.setSensorID((String) record[0]);
             ms.setMetricsName((String) record[1]);
-            ms.setMinValue(BigDecimal.valueOf((double) record[2]));
-            ms.setMaxValue(BigDecimal.valueOf((double) record[3]));
-            ms.setSum(BigDecimal.valueOf((double) record[4]));
+            ms.setMinValue((BigDecimal) record[2]);
+            ms.setMaxValue((BigDecimal) record[3]);
+            ms.setSum((BigDecimal) record[4]);
             ms.setAverage(BigDecimal.valueOf((double) record[5]));
             return ms;
         }).forEachOrdered(ms -> {
@@ -203,9 +209,9 @@ public class WeatherDataDAO {
             MetricsStatistic ms = new MetricsStatistic();
             ms.setSensorID((String) record[0]);
             ms.setMetricsName((String) record[1]);
-            ms.setMinValue(BigDecimal.valueOf((double) record[2]));
-            ms.setMaxValue(BigDecimal.valueOf((double) record[3]));
-            ms.setSum(BigDecimal.valueOf((double) record[4]));
+            ms.setMinValue((BigDecimal) record[2]);
+            ms.setMaxValue((BigDecimal) record[3]);
+            ms.setSum((BigDecimal) record[4]);
             ms.setAverage(BigDecimal.valueOf((double) record[5]));
             return ms;
         }).forEachOrdered(ms -> {
@@ -226,9 +232,9 @@ public class WeatherDataDAO {
             MetricsStatistic ms = new MetricsStatistic();
             ms.setSensorID((String) record[0]);
             ms.setMetricsName((String) record[1]);
-            ms.setMinValue(BigDecimal.valueOf((double) record[2]));
-            ms.setMaxValue(BigDecimal.valueOf((double) record[3]));
-            ms.setSum(BigDecimal.valueOf((double) record[4]));
+            ms.setMinValue((BigDecimal) record[2]);
+            ms.setMaxValue((BigDecimal) record[3]);
+            ms.setSum((BigDecimal) record[4]);
             ms.setAverage(BigDecimal.valueOf((double) record[5]));
             return ms;
         }).forEachOrdered(ms -> {
