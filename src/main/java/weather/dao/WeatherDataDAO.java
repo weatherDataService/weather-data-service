@@ -22,7 +22,7 @@ public class WeatherDataDAO {
     //These data will come from database table "WEATHER_SENSOR".
     private static final List<String> SENSOR_IDS = List.of("S01", "S02", "S03", "S04", "S05");
     //These data will come from database table "WEATHER_METRICS".
-    private static final List<String> METRICS_NAMES = List.of("temp", "hum", "wp");
+    private static final List<String> METRICS_NAMES = List.of("temperature", "humidity", "wind_speed");
 
     @PersistenceContext(unitName = "weatherPU")
     private EntityManager em;
