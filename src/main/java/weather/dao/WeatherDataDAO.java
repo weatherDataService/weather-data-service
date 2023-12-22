@@ -9,7 +9,6 @@ import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
-import org.apache.commons.collections4.CollectionUtils;
 import weather.entity.WeatherData;
 import weather.model.MetricsAverage;
 import weather.model.MetricsStatistic;

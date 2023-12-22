@@ -3,7 +3,6 @@ package weather.service;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.enterprise.context.RequestScoped;
@@ -50,9 +49,15 @@ public class WeatherDataService {
                 throw new WeatherDataServiceException("No weather data in the request");
             }
 
-            for (Entry<String, BigDecimal> entry : weatherDataMap.entrySet()) {
-                weatherDataDao.addWeatherData(request.getSensorID(), entry.getKey(), entry.getValue(), Utility.getDateFromString(request.getMeasureTime()));
-            }
+            weatherDataMap.entrySet()
+                    .forEach(entry
+                            -> weatherDataDao.addWeatherData(
+                            request.getSensorID(),
+                            entry.getKey(),
+                            entry.getValue(),
+                            Utility.getDateFromString(request.getMeasureTime())
+                    )
+                    );
 
             response.setStatus(Status.SUCCESS);
             response.setMessage("Success adding weather data");
