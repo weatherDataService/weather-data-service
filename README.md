@@ -31,7 +31,7 @@ A client can call this API endpoint to get all the statistic values (min, max, s
 
 # Steps to run APIs:
 
-Step#1: Install Oracle Database and create sequence SEQ_WEATHER_DATA_ID and two database tables: WEATHER_METRICS and WEATHER_DATA. Create public synonym, etc.
+Step#1: Install Oracle Database and create sequence SEQ_WEATHER_DATA_ID and three database tables: WEATHER_METRICS, WEATHER_SENSOR and WEATHER_DATA. Create public synonym, etc.
 
 Step#2: Install WildFly or other application servers and add Oracle JDBC driver to the application server. Create a data source “jdbc/weather” from the application server’s admin console.
 
